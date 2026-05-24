@@ -1,10 +1,11 @@
 # An Enterprise React Starter Template for the Impatient Developer
 
-This template provides a production-grade, modular boilerplate setup to get a scalable React frontend platform working in Vite with HMR, driven by an NX Monorepo architecture. 
+This template provides a production-grade, modular boilerplate setup to get a scalable React frontend platform working in Vite with HMR, driven by an NX Monorepo architecture.
 
 It is designed so that you can easily fork it on GitHub to spin up new, modular multi-tenant applications. Use NPM for package management.
 
 ### Includes:
+
 - **ESLint & Prettier** for linting and formatting (NX integrated)
 - **Typescript** for robust type safety
 - **Tailwind v4 + Material UI (MUI)** for styling and flexible UI components
@@ -17,6 +18,7 @@ It is designed so that you can easily fork it on GitHub to spin up new, modular 
 - **Extensible API Client** with Axios interceptors
 
 ### Extras:
+
 - GitHub Actions CI/CD setup
 - Dockerfile for production deployment
 - Relative imports (`libs/`, `apps/`) handled via `tsconfig.base.json` aliases
@@ -29,11 +31,11 @@ Run the command to clone the repo without git history.
 
 ```bash
 # Run the command to clone the repo without git history.
-npx degit your-github-user/your-enterprise-template <YOUR_PROJECT_NAME>
+npx degit kkmkrish03/enterprise-react-starter <YOUR_PROJECT_NAME>
 
 cd <YOUR_PROJECT_NAME>
 
-# get rid of .gitkeep files 
+# get rid of .gitkeep files
 npx del-cli del **/.gitkeep
 
 # initialize git
@@ -66,7 +68,7 @@ npm run dev:host
 # format files
 npm run format
 
-# lint 
+# lint
 npm run lint
 
 # build the admin application
@@ -83,6 +85,7 @@ npm run preview
 The platform follows a modular, feature-driven scalable architecture using NX monorepo.
 
 ### Folder Structure
+
 - `apps/admin` - Contains the runnable admin application.
 - `libs/platform/core` - Core abstractions, context providers (Auth, Tenant), routing registry, and API layers.
 - `libs/platform/ui` - Reusable UI components, Layouts, Theme providers (MUI + Tailwind).
@@ -96,12 +99,12 @@ graph TD
     A --> C(libs/features/dashboard)
     A --> D(libs/platform/core)
     A --> E(libs/platform/ui)
-    
+
     B --> D
     B --> E
     C --> D
     C --> E
-    
+
     D[Platform Core]
     E[Platform UI]
 ```
@@ -109,6 +112,7 @@ graph TD
 ### Adding a New Feature Module
 
 Use NX generators to create a new library and keep things modular:
+
 ```bash
 npx nx g @nx/react:lib libs/features/my-new-feature --bundler=vite --unitTestRunner=vitest --style=css
 ```
@@ -116,10 +120,12 @@ npx nx g @nx/react:lib libs/features/my-new-feature --bundler=vite --unitTestRun
 ---
 
 ## Notes
+
 - This template relies on NPM workspaces managed via NX. Ensure your node version is `>=20.0.0` as specified in the engines block.
 - If you prefer Yarn or pnpm, ensure you remove `package-lock.json` and generate the appropriate lock file using your preferred manager, but remember to update the NX configurations accordingly.
 
 ## Useful references
+
 - [NX Monorepo Docs](https://nx.dev/)
 - [React Router v7 Docs](https://reactrouter.com/)
 - [MUI Components](https://mui.com/material-ui/getting-started/)

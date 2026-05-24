@@ -1,0 +1,34 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compileOnSave": false,
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/admin-e2e"
+    },
+    {
+      "path": "./apps/admin"
+    },
+    {
+      "path": "./libs/platform/core"
+    },
+    {
+      "path": "./libs/platform/ui"
+    },
+    {
+      "path": "./libs/features/auth"
+    },
+    {
+      "path": "./libs/features/dashboard"
+    },
+    {
+      "path": "./libs/features/tenant-management"
+    },
+    {
+      "path": "./libs/features/users"
+    },
+    {
+      "path": "./libs/features/settings"
+    }
+  ]
+}

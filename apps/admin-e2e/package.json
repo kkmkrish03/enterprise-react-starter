@@ -1,0 +1,10 @@
+{
+  "name": "@bare-bodhika/admin-e2e",
+  "version": "0.0.1",
+  "private": true,
+  "nx": {
+    "implicitDependencies": [
+      "@bare-bodhika/admin"
+    ]
+  }
+}

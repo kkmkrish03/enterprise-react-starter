@@ -29,6 +29,9 @@
     },
     {
       "path": "./libs/features/settings"
+    },
+    {
+      "path": "./libs/features/preflight-test"
     }
   ]
 }

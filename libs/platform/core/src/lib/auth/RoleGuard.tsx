@@ -17,10 +17,10 @@ export const RoleGuard = ({
   allowedRoles = [], 
   allowedPermissions = [], 
   fallback = null 
-}: RoleGuardProps) => {
+}: RoleGuardProps): any => {
   const { user } = useAuth();
 
-  if (!user) return <>{fallback}</>;
+  if (!user) return fallback;
 
   // Check if user has at least one of the allowed roles (if roles are specified)
   const hasRole = allowedRoles.length === 0 || 
@@ -31,8 +31,8 @@ export const RoleGuard = ({
     allowedPermissions.some(permission => user.permissions.includes(permission));
 
   if (hasRole && hasPermission) {
-    return <>{children}</>;
+    return children;
   }
 
-  return <>{fallback}</>;
+  return fallback;
 };

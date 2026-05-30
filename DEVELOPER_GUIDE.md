@@ -9,9 +9,29 @@ This document will teach you exactly how to use the platform and where to go to 
 ## 🚀 How to Run the Project
 
 ### 1. Initial Setup
-Install all dependencies using NPM (the project is configured to use NPM workspaces via NX):
-```bash
-npm install
+The project provides automated setup scripts that detect/install PostgreSQL, start the database service, provision a development database, create environment configuration files, and install node dependencies:
+
+- **On Windows (PowerShell):**
+  ```powershell
+  ./setup.ps1
+  ```
+- **On Linux / macOS (Bash):**
+  ```bash
+  chmod +x setup.sh
+  ./setup.sh
+  ```
+
+#### 📦 Database Defaults
+The automated setup configures a local PostgreSQL instance with the following default parameters:
+- **Host:** `localhost`
+- **Port:** `5432`
+- **User:** `postgres`
+- **Password:** `password`
+- **Database:** `bodhika_enterprise`
+
+The credentials are saved in `.env` automatically under the `DATABASE_URL` parameter:
+```env
+DATABASE_URL=postgresql://postgres:password@localhost:5432/bodhika_enterprise
 ```
 
 ### 2. Start the Development Server

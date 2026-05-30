@@ -27,7 +27,7 @@ It is designed so that you can easily fork it on GitHub to spin up new, modular 
 
 ## Usage
 
-Run the command to clone the repo without git history.
+Clone the repository and run the automated platform setup script. The setup script will detect/install PostgreSQL, start the database service, provision the development database, create local environment configurations, and install dependencies:
 
 ```bash
 # Run the command to clone the repo without git history.
@@ -35,46 +35,55 @@ npx degit kkmkrish03/enterprise-react-starter <YOUR_PROJECT_NAME>
 
 cd <YOUR_PROJECT_NAME>
 
-# get rid of .gitkeep files
+# Get rid of .gitkeep files
 npx del-cli del **/.gitkeep
 
-# initialize git
+# Initialize git
 git init
-
-# connect to github
-git remote add origin <GIT_REPO_URL>
 ```
+
+### 🚀 Automated Setup (with PostgreSQL)
+
+- **On Windows (PowerShell):**
+  ```powershell
+  ./setup.ps1
+  ```
+- **On Linux / macOS (Bash):**
+  ```bash
+  chmod +x setup.sh
+  ./setup.sh
+  ```
+
+This configures a local PostgreSQL instance by default:
+- **Host:** `localhost`
+- **Port:** `5432`
+- **User:** `postgres`
+- **Password:** `password`
+- **Database:** `bodhika_enterprise`
+
+A `.env` configuration file is automatically created matching these credentials.
 
 ---
 
 ## Commands
 
 ```bash
-# install dependencies during development
-npm install
-
-# or
-npm run install:ci
-
-# install dependencies in production environment
-npm run install:prod
-
-# start dev server on port 4200 (NX default)
+# Start dev server on port 4200 (NX default)
 npm run dev
 
-# start dev server and host it on local network
+# Start dev server and host it on local network
 npm run dev:host
 
-# format files
+# Format files
 npm run format
 
-# lint
+# Lint workspace projects
 npm run lint
 
-# build the admin application
+# Build the admin application for production
 npm run build
 
-# preview the created build
+# Preview the created build locally
 npm run preview
 ```
 

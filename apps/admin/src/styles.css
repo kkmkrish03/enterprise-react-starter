@@ -1,6 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source "../../../libs/**/*.{ts,tsx,js,jsx}";
+@source "./**/*.{ts,tsx,js,jsx}";
 
 :root {
   --primary-color: #1976d2;
@@ -17,6 +20,6 @@ body {
 }
 
 .dark body {
-  background-color: #121212;
+  background-color: #111827;
   color: #ffffff;
 }

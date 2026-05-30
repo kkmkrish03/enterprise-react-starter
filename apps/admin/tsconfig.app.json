@@ -32,5 +32,31 @@
     "eslint.config.cjs",
     "eslint.config.mjs"
   ],
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
+  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"],
+  "references": [
+    {
+      "path": "../../libs/features/preflight-test/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/features/tenant-management/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/features/settings/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/features/users/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/features/dashboard/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/features/auth/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/platform/ui/tsconfig.lib.json"
+    },
+    {
+      "path": "../../libs/platform/core/tsconfig.lib.json"
+    }
+  ]
 }

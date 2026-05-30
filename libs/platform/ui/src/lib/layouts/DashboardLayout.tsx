@@ -1,11 +1,11 @@
-import React from 'react';
 import { Outlet, Link } from 'react-router';
 import { useTheme } from '../theme/ThemeContext';
-import { useTenant } from '../../../../core/src/lib/tenant/TenantContext';
-import { useAuth } from '../../../../core/src/lib/auth/AuthContext';
+import { useTenant, useAuth } from '@bare-bodhika/core';
+import { ThemeToggle } from '../components/ThemeToggle';
+import { Button } from '../components/Button';
 
 export const DashboardLayout = () => {
-  const { mode, toggleTheme } = useTheme();
+  const { mode } = useTheme();
   const { tenant } = useTenant();
   const { user, logout } = useAuth();
 
@@ -14,7 +14,7 @@ export const DashboardLayout = () => {
       {/* Sidebar */}
       <aside className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 hidden md:block">
         <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-center items-center">
-          <h1 className="text-xl font-bold text-primary">{tenant?.name || 'Platform'}</h1>
+          <h1 className="text-xl font-bold text-primary" style={{ color: 'var(--primary-color)' }}>{tenant?.name || 'Platform'}</h1>
         </div>
         <nav className="p-4 space-y-2">
           <Link to="/" className="block p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">Dashboard</Link>
@@ -29,15 +29,18 @@ export const DashboardLayout = () => {
         {/* Header */}
         <header className="h-16 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between px-6">
           <div className="flex items-center space-x-4">
-            <span className="font-medium">Welcome, {user?.name || 'User'}</span>
+            <span className="font-medium text-sm">Welcome, {user?.name || 'User'}</span>
           </div>
           <div className="flex items-center space-x-4">
-            <button onClick={toggleTheme} className="p-2 rounded bg-gray-100 dark:bg-gray-700">
-              Toggle {mode === 'light' ? 'Dark' : 'Light'}
-            </button>
-            <button onClick={logout} className="p-2 rounded bg-red-100 text-red-600 dark:bg-red-900 dark:text-red-300">
+            <ThemeToggle />
+            <Button 
+              variant="text" 
+              size="sm" 
+              onClick={logout} 
+              className="text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30"
+            >
               Logout
-            </button>
+            </Button>
           </div>
         </header>
 

@@ -23,7 +23,7 @@ export class HttpAuthAdapter implements AuthAdapter {
     try {
       const response = await apiClient.get<User>('/auth/me');
       return response.data;
-    } catch (error) {
+    } catch {
       localStorage.removeItem('access_token');
       return null;
     }
@@ -34,7 +34,7 @@ export class HttpAuthAdapter implements AuthAdapter {
       const response = await apiClient.post<{ token: string }>('/auth/refresh');
       localStorage.setItem('access_token', response.data.token);
       return response.data.token;
-    } catch (error) {
+    } catch {
       localStorage.removeItem('access_token');
       return null;
     }

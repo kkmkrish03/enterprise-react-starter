@@ -2,9 +2,9 @@ import { AuthAdapter, User } from './AuthAdapter';
 
 export class MockAuthAdapter implements AuthAdapter {
   private currentUser: User | null = null;
+  private STORAGE_KEY = 'mock_current_user';
 
   async login(credentials: any): Promise<User> {
-    // Mock login implementation
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         if (credentials.email === 'admin@example.com' && credentials.password === 'password') {
@@ -13,9 +13,10 @@ export class MockAuthAdapter implements AuthAdapter {
             email: 'admin@example.com',
             name: 'Admin User',
             roles: ['admin'],
-            permissions: ['read:all', 'write:all'],
+            permissions: ['manage_users', 'manage_tenants', 'manage_config', 'read:all', 'write:all'],
             tenantId: 'default'
           };
+          localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.currentUser));
           resolve(this.currentUser);
         } else {
           reject(new Error('Invalid credentials'));
@@ -28,6 +29,7 @@ export class MockAuthAdapter implements AuthAdapter {
     return new Promise((resolve) => {
       setTimeout(() => {
         this.currentUser = null;
+        localStorage.removeItem(this.STORAGE_KEY);
         resolve();
       }, 200);
     });
@@ -36,6 +38,16 @@ export class MockAuthAdapter implements AuthAdapter {
   async getCurrentUser(): Promise<User | null> {
     return new Promise((resolve) => {
       setTimeout(() => {
+        if (!this.currentUser) {
+          const stored = localStorage.getItem(this.STORAGE_KEY);
+          if (stored) {
+            try {
+              this.currentUser = JSON.parse(stored);
+            } catch {
+              localStorage.removeItem(this.STORAGE_KEY);
+            }
+          }
+        }
         resolve(this.currentUser);
       }, 200);
     });

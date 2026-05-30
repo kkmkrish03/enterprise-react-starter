@@ -1,25 +1,42 @@
-import React from 'react';
+
 import { useRouteError } from 'react-router';
+import { Box, Typography, Button } from '@mui/material';
 
 export const ErrorPage = () => {
   const error: any = useRouteError();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white px-4">
-      <div className="max-w-md w-full text-center space-y-4">
-        <h1 className="text-6xl font-extrabold text-red-500">Oops!</h1>
-        <h2 className="text-2xl font-bold">Something went wrong</h2>
-        <p className="text-gray-500 dark:text-gray-400">
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        bgcolor: 'background.default',
+        color: 'text.primary',
+        px: 2
+      }}
+    >
+      <Box sx={{ maxWidth: 400, width: '100%', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Typography variant="h2" sx={{ fontWeight: 'extrabold', color: 'error.main' }}>
+          Oops!
+        </Typography>
+        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+          Something went wrong
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
           {error?.statusText || error?.message || "An unexpected error occurred."}
-        </p>
-        <button 
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
           onClick={() => window.location.href = '/'}
-          className="mt-6 px-4 py-2 bg-primary text-white rounded hover:bg-opacity-90"
-          style={{ backgroundColor: 'var(--primary-color)' }}
+          sx={{ mt: 3, alignSelf: 'center' }}
         >
           Return to Home
-        </button>
-      </div>
-    </div>
+        </Button>
+      </Box>
+    </Box>
   );
 };
+export default ErrorPage;

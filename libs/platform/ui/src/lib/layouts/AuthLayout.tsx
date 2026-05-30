@@ -1,7 +1,6 @@
-import React from 'react';
 import { Outlet } from 'react-router';
 import { useTheme } from '../theme/ThemeContext';
-import { useTenant } from '../../../../core/src/lib/tenant/TenantContext';
+import { useTenant } from '@bare-bodhika/core';
 
 export const AuthLayout = () => {
   const { mode } = useTheme();

@@ -1,5 +1,4 @@
-import React from 'react';
-import { useTenant } from '../../../../platform/core/src/lib/tenant/TenantContext';
+import { useTenant } from '@bare-bodhika/core';
 
 export const Dashboard = () => {
   const { tenant } = useTenant();

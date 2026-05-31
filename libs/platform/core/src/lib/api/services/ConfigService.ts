@@ -1,5 +1,5 @@
 import { apiClient } from '../apiClient';
-import { getSqliteDb, query, run } from '../sqliteDb';
+import { getMockDb, saveMockDb } from '../mockDb';
 
 export interface ConfigDTO {
   key: string;
@@ -14,21 +14,8 @@ export const ConfigService = {
   getConfigs: async (): Promise<ConfigDTO[]> => {
     if (import.meta.env.VITE_AUTH_MODE !== 'http') {
       await delay(400);
-      const db = await getSqliteDb();
-      const rows = query<any>(db, "SELECT * FROM configs");
-      return rows.map(r => {
-        let val: any = r.value;
-        if (val === 'true') val = true;
-        else if (val === 'false') val = false;
-        else if (val !== null && !isNaN(Number(val))) val = Number(val);
-
-        return {
-          key: r.key,
-          value: val,
-          description: r.description,
-          isPublic: r.isPublic === 1
-        };
-      });
+      const db = await getMockDb();
+      return db.configs;
     }
     const response = await apiClient.get<ConfigDTO[]>('/config');
     return response.data;
@@ -37,11 +24,12 @@ export const ConfigService = {
   updateConfig: async (key: string, value: any): Promise<void> => {
     if (import.meta.env.VITE_AUTH_MODE !== 'http') {
       await delay(400);
-      const db = await getSqliteDb();
-      const existing = query<any>(db, "SELECT * FROM configs WHERE key = ?", [key]);
-      if (existing.length === 0) throw new Error('Config not found');
+      const db = await getMockDb();
+      const configIndex = db.configs.findIndex(c => c.key === key);
+      if (configIndex === -1) throw new Error('Config not found');
 
-      run(db, "UPDATE configs SET value = ? WHERE key = ?", [String(value), key]);
+      db.configs[configIndex].value = value;
+      saveMockDb(db);
       return;
     }
     await apiClient.put(`/config/${key}`, { value });

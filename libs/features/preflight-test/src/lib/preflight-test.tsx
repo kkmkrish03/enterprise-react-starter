@@ -10,8 +10,7 @@ import {
   useNotificationStore,
   RoleGuard,
   TenantService,
-  getSqliteDb,
-  query
+  getMockDb
 } from '@bare-bodhika/core';
 import { Box, Typography, Divider, Grid, Paper } from '@mui/material';
 
@@ -54,27 +53,22 @@ export const PreflightTest = () => {
     { id: 6, name: 'RBAC Permission Guard Filter', status: 'Pending', details: 'Waiting to execute...' },
   ]);
 
-  // Dynamic SQLite live metrics counting
-  const fetchSqliteStats = useCallback(async () => {
+  // Dynamic Mock DB live metrics counting
+  const fetchMockDbStats = useCallback(async () => {
     try {
-      const db = await getSqliteDb();
-      const usersRes = query<{ count: number }>(db, "SELECT COUNT(*) as count FROM users");
-      const tenantsRes = query<{ count: number }>(db, "SELECT COUNT(*) as count FROM tenants");
-      const configsRes = query<{ count: number }>(db, "SELECT COUNT(*) as count FROM configs");
-      const rolesRes = query<{ count: number }>(db, "SELECT COUNT(*) as count FROM roles");
-      
+      const db = await getMockDb();
       setDbStats({
-        users: usersRes[0]?.count || 0,
-        tenants: tenantsRes[0]?.count || 0,
-        configs: configsRes[0]?.count || 0,
-        roles: rolesRes[0]?.count || 0
+        users: db.users.length,
+        tenants: db.tenants.length,
+        configs: db.configs.length,
+        roles: db.roles.length
       });
     } catch (e) {
-      console.error("Failed to query SQLite stats", e);
+      console.error("Failed to query Mock DB stats", e);
     }
   }, []);
 
-  // Fetch plan of the current tenant from SQLite db to avoid type checking errors
+  // Fetch plan of the current tenant from the mock db to avoid type checking errors
   const fetchTenantPlan = useCallback(async () => {
     try {
       const tenants = await TenantService.getTenants();
@@ -90,8 +84,8 @@ export const PreflightTest = () => {
   }, [tenant]);
 
   useEffect(() => {
-    fetchSqliteStats();
-  }, [testResults, fetchSqliteStats]);
+    fetchMockDbStats();
+  }, [testResults, fetchMockDbStats]);
 
   useEffect(() => {
     fetchTenantPlan();
@@ -285,7 +279,7 @@ export const PreflightTest = () => {
         </div>
 
         <div className="flex items-center gap-1.5 lg:border-l border-slate-200 dark:border-slate-800 lg:pl-4">
-          <span className="font-bold text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wider">SQLite DB Engines:</span>
+          <span className="font-bold text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wider">Mock DB Storage:</span>
           <span className="text-slate-700 dark:text-slate-350 font-semibold">
             {dbStats.users + dbStats.tenants + dbStats.configs + dbStats.roles} Entities (U:{dbStats.users} · T:{dbStats.tenants} · C:{dbStats.configs} · R:{dbStats.roles})
           </span>

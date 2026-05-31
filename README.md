@@ -54,7 +54,7 @@ git init
   ./setup.sh
   ```
 
-This configures a client-side WebAssembly-based SQLite database (`sql.js`) to persist mock relational data in the browser. It stores base64-encoded SQL binary dumps directly inside local storage (`mock_sqlite_db_base64`), preserving changes across page reloads.
+This configures a client-side JSON database persisted in browser LocalStorage (`mock_platform_db`) to store mock relational data, preserving changes across page reloads.
 
 A `.env` configuration file is automatically created during setup.
 

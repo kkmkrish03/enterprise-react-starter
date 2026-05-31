@@ -1,5 +1,5 @@
 import { apiClient } from '../apiClient';
-import { getSqliteDb, query, run } from '../sqliteDb';
+import { getMockDb, saveMockDb } from '../mockDb';
 
 export interface UserDTO {
   id: string;
@@ -16,16 +16,8 @@ export const UserService = {
   getUsers: async (): Promise<UserDTO[]> => {
     if (import.meta.env.VITE_AUTH_MODE !== 'http') {
       await delay(400);
-      const db = await getSqliteDb();
-      const rows = query<any>(db, "SELECT * FROM users");
-      return rows.map(r => ({
-        id: r.id,
-        name: r.name,
-        email: r.email,
-        roles: JSON.parse(r.roles),
-        tenantId: r.tenantId,
-        status: r.status as 'ACTIVE' | 'INACTIVE'
-      }));
+      const db = await getMockDb();
+      return db.users;
     }
     const response = await apiClient.get<UserDTO[]>('/users');
     return response.data;
@@ -34,7 +26,7 @@ export const UserService = {
   createUser: async (data: Partial<UserDTO>): Promise<UserDTO> => {
     if (import.meta.env.VITE_AUTH_MODE !== 'http') {
       await delay(400);
-      const db = await getSqliteDb();
+      const db = await getMockDb();
       const newId = Math.random().toString(36).substring(7);
       const name = data.name || 'New User';
       const email = data.email || '';
@@ -42,11 +34,7 @@ export const UserService = {
       const tenantId = data.tenantId || 'default';
       const status = data.status || 'ACTIVE';
 
-      run(db, "INSERT INTO users (id, name, email, roles, tenantId, status) VALUES (?, ?, ?, ?, ?, ?)", [
-        newId, name, email, JSON.stringify(roles), tenantId, status
-      ]);
-
-      return {
+      const newUser: UserDTO = {
         id: newId,
         name,
         email,
@@ -54,6 +42,11 @@ export const UserService = {
         tenantId,
         status
       };
+
+      db.users.push(newUser);
+      saveMockDb(db);
+
+      return newUser;
     }
     const response = await apiClient.post<UserDTO>('/users', data);
     return response.data;
@@ -62,31 +55,27 @@ export const UserService = {
   updateUser: async (id: string, data: Partial<UserDTO>): Promise<UserDTO> => {
     if (import.meta.env.VITE_AUTH_MODE !== 'http') {
       await delay(400);
-      const db = await getSqliteDb();
-      const existing = query<any>(db, "SELECT * FROM users WHERE id = ?", [id]);
-      if (existing.length === 0) throw new Error('User not found');
+      const db = await getMockDb();
+      const userIndex = db.users.findIndex(u => u.id === id);
+      if (userIndex === -1) throw new Error('User not found');
       
-      const u = existing[0];
-      const name = data.name !== undefined ? data.name : u.name;
-      const email = data.email !== undefined ? data.email : u.email;
-      const roles = data.roles !== undefined ? data.roles : JSON.parse(u.roles);
-      const tenantId = data.tenantId !== undefined ? data.tenantId : u.tenantId;
-      const status = data.status !== undefined ? data.status : u.status;
-
-      run(db, "UPDATE users SET name = ?, email = ?, roles = ?, tenantId = ?, status = ? WHERE id = ?", [
-        name, email, JSON.stringify(roles), tenantId, status, id
-      ]);
-
-      return {
+      const u = db.users[userIndex];
+      const updatedUser: UserDTO = {
         id,
-        name,
-        email,
-        roles,
-        tenantId,
-        status: status as 'ACTIVE' | 'INACTIVE'
+        name: data.name !== undefined ? data.name : u.name,
+        email: data.email !== undefined ? data.email : u.email,
+        roles: data.roles !== undefined ? data.roles : u.roles,
+        tenantId: data.tenantId !== undefined ? data.tenantId : u.tenantId,
+        status: data.status !== undefined ? data.status : u.status
       };
+
+      db.users[userIndex] = updatedUser;
+      saveMockDb(db);
+
+      return updatedUser;
     }
     const response = await apiClient.put<UserDTO>(`/users/${id}`, data);
     return response.data;
   }
 };
+

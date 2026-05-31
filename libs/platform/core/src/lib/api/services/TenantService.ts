@@ -1,5 +1,5 @@
 import { apiClient } from '../apiClient';
-import { getSqliteDb, query, run } from '../sqliteDb';
+import { getMockDb, saveMockDb } from '../mockDb';
 
 export interface TenantDTO {
   id: string;
@@ -19,19 +19,8 @@ export const TenantService = {
   getTenants: async (): Promise<TenantDTO[]> => {
     if (import.meta.env.VITE_AUTH_MODE !== 'http') {
       await delay(400);
-      const db = await getSqliteDb();
-      const rows = query<any>(db, "SELECT * FROM tenants");
-      return rows.map(r => ({
-        id: r.id,
-        name: r.name,
-        status: r.status as 'ACTIVE' | 'INACTIVE',
-        domain: r.domain,
-        plan: r.plan as 'ENTERPRISE' | 'PRO' | 'STARTER',
-        branding: {
-          primaryColor: r.primaryColor,
-          logoUrl: r.logoUrl || undefined
-        }
-      }));
+      const db = await getMockDb();
+      return db.tenants;
     }
     const response = await apiClient.get<TenantDTO[]>('/tenants');
     return response.data;
@@ -40,33 +29,27 @@ export const TenantService = {
   updateTenant: async (id: string, data: Partial<TenantDTO>): Promise<TenantDTO> => {
     if (import.meta.env.VITE_AUTH_MODE !== 'http') {
       await delay(400);
-      const db = await getSqliteDb();
-      const existing = query<any>(db, "SELECT * FROM tenants WHERE id = ?", [id]);
-      if (existing.length === 0) throw new Error('Tenant not found');
+      const db = await getMockDb();
+      const tenantIndex = db.tenants.findIndex(t => t.id === id);
+      if (tenantIndex === -1) throw new Error('Tenant not found');
 
-      const t = existing[0];
-      const name = data.name !== undefined ? data.name : t.name;
-      const status = data.status !== undefined ? data.status : t.status;
-      const domain = data.domain !== undefined ? data.domain : t.domain;
-      const plan = data.plan !== undefined ? data.plan : t.plan;
-      const primaryColor = data.branding?.primaryColor !== undefined ? data.branding.primaryColor : t.primaryColor;
-      const logoUrl = data.branding?.logoUrl !== undefined ? data.branding.logoUrl : t.logoUrl;
-
-      run(db, "UPDATE tenants SET name = ?, status = ?, domain = ?, plan = ?, primaryColor = ?, logoUrl = ? WHERE id = ?", [
-        name, status, domain, plan, primaryColor, logoUrl, id
-      ]);
-
-      return {
+      const t = db.tenants[tenantIndex];
+      const updatedTenant: TenantDTO = {
         id,
-        name,
-        status: status as 'ACTIVE' | 'INACTIVE',
-        domain,
-        plan: plan as 'ENTERPRISE' | 'PRO' | 'STARTER',
+        name: data.name !== undefined ? data.name : t.name,
+        status: data.status !== undefined ? data.status : t.status,
+        domain: data.domain !== undefined ? data.domain : t.domain,
+        plan: data.plan !== undefined ? data.plan : t.plan,
         branding: {
-          primaryColor,
-          logoUrl: logoUrl || undefined
+          primaryColor: data.branding?.primaryColor !== undefined ? data.branding.primaryColor : t.branding.primaryColor,
+          logoUrl: data.branding?.logoUrl !== undefined ? data.branding.logoUrl : t.branding.logoUrl
         }
       };
+
+      db.tenants[tenantIndex] = updatedTenant;
+      saveMockDb(db);
+
+      return updatedTenant;
     }
     const response = await apiClient.put<TenantDTO>(`/tenants/${id}`, data);
     return response.data;

@@ -1,27 +1,26 @@
 import { AuthAdapter, User } from './AuthAdapter';
-import { getSqliteDb, query } from '../api/sqliteDb';
+import { getMockDb } from '../api/mockDb';
 
 export class MockAuthAdapter implements AuthAdapter {
   private currentUser: User | null = null;
   private STORAGE_KEY = 'mock_current_user';
 
   async login(credentials: any): Promise<User> {
-    const db = await getSqliteDb();
-    const existing = query<any>(db, "SELECT * FROM users WHERE email = ?", [credentials.email]);
+    const db = await getMockDb();
+    const matched = db.users.find(u => u.email === credentials.email);
     
-    if (existing.length > 0 && credentials.password === 'password') {
-      const u = existing[0];
-      const parsedRoles = JSON.parse(u.roles);
+    if (matched && credentials.password === 'password') {
+      const parsedRoles = matched.roles;
       
       this.currentUser = {
-        id: u.id,
-        email: u.email,
-        name: u.name,
+        id: matched.id,
+        email: matched.email,
+        name: matched.name,
         roles: parsedRoles,
         permissions: parsedRoles.includes('super_admin')
           ? ['manage_users', 'manage_tenants', 'manage_config', 'read:all', 'write:all', 'super_admin_access']
           : ['manage_users', 'manage_tenants', 'manage_config', 'read:all', 'write:all'],
-        tenantId: u.tenantId
+        tenantId: matched.tenantId
       };
       
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.currentUser));

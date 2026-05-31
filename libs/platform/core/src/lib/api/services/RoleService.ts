@@ -1,5 +1,5 @@
 import { apiClient } from '../apiClient';
-import { getSqliteDb, query } from '../sqliteDb';
+import { getMockDb } from '../mockDb';
 
 export interface RoleDTO {
   id: string;
@@ -14,14 +14,8 @@ export const RoleService = {
   getRoles: async (): Promise<RoleDTO[]> => {
     if (import.meta.env.VITE_AUTH_MODE !== 'http') {
       await delay(400);
-      const db = await getSqliteDb();
-      const rows = query<any>(db, "SELECT * FROM roles");
-      return rows.map(r => ({
-        id: r.id,
-        name: r.name,
-        permissions: JSON.parse(r.permissions),
-        description: r.description
-      }));
+      const db = await getMockDb();
+      return db.roles;
     }
     const response = await apiClient.get<RoleDTO[]>('/roles');
     return response.data;
@@ -30,16 +24,10 @@ export const RoleService = {
   getPermissions: async (): Promise<string[]> => {
     if (import.meta.env.VITE_AUTH_MODE !== 'http') {
       await delay(400);
-      const db = await getSqliteDb();
-      const rows = query<any>(db, "SELECT permissions FROM roles");
+      const db = await getMockDb();
       const permsSet = new Set<string>();
-      rows.forEach(r => {
-        try {
-          const list = JSON.parse(r.permissions);
-          list.forEach((p: string) => permsSet.add(p));
-        } catch {
-          // ignore parsing error
-        }
+      db.roles.forEach(r => {
+        r.permissions.forEach(p => permsSet.add(p));
       });
       return Array.from(permsSet);
     }

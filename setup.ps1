@@ -5,7 +5,7 @@
 Write-Host "==========================================================" -ForegroundColor Cyan
 Write-Host "Initializing Bodhika Enterprise Starter Platform (Windows)..." -ForegroundColor Cyan
 Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host "Local-first mode enabled. Data will persist in browser SQLite WASM." -ForegroundColor Cyan
+Write-Host "Local-first mode enabled. Data will persist in browser LocalStorage." -ForegroundColor Cyan
 
 # 1. Set up Environment Variables (.env)
 Write-Host "`n[1/2] Copying Environment Configurations..." -ForegroundColor Yellow

@@ -21,11 +21,11 @@ The project provides automated setup scripts that create environment configurati
   ./setup.sh
   ```
 
-#### 📦 Client-Side Database (SQLite WASM)
-In development mode, the platform runs a local-first SQL database running directly in the browser via `sql.js` (WebAssembly-based SQLite).
-- All DTO CRUD queries are executed directly on the client.
-- The binary database file is automatically exported and base64-encoded to `localStorage` (`mock_sqlite_db_base64`) on mutations, keeping mock data persistent across page reloads.
-- To clear the database and restore default records, clear your browser's local storage.
+#### 📦 Client-Side Database (LocalStorage JSON Mock DB)
+In development mode, the platform runs a local-first JSON database running directly in the browser using `localStorage`.
+- All DTO CRUD operations are executed directly on the client.
+- The database state is automatically exported to `localStorage` (`mock_platform_db`) on mutations, keeping mock data persistent across page reloads.
+- To clear the database and restore default records, clear your browser's local storage or delete the `mock_platform_db` key.
 
 ### 2. Start the Development Server
 To run the admin application locally with Hot Module Replacement (HMR):

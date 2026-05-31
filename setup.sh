@@ -8,7 +8,7 @@ set -e
 echo -e "\033[0;36m==========================================================\033[0m"
 echo -e "\033[0;36mInitializing Bodhika Enterprise Starter Platform (Unix)...\033[0m"
 echo -e "\033[0;36m==========================================================\033[0m"
-echo -e "\033[0;36mLocal-first mode enabled. Data will persist in browser SQLite WASM.\033[0m"
+echo -e "\033[0;36mLocal-first mode enabled. Data will persist in browser LocalStorage.\033[0m"
 
 # 1. Environment File Configuration
 echo -e "\n\033[0;33m[1/2] Copying Environment Configurations...\033[0m"

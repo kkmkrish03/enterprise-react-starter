@@ -6,10 +6,16 @@ import {
   SelectField,
   Modal,
   DataTable,
-  LoadingSpinner
+  LoadingSpinner,
+  ErrorBoundary
 } from '@bare-bodhika/ui';
 import { Box, Typography, Grid, Slider, FormControlLabel, Switch } from '@mui/material';
 import { useNotificationStore } from '@bare-bodhika/core';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+
+const CrashComponent = () => {
+  throw new Error("Deliberate component failure triggered from components playground.");
+};
 
 export const ComponentsCatalog = () => {
   const addNotification = useNotificationStore(state => state.addNotification);
@@ -31,6 +37,9 @@ export const ComponentsCatalog = () => {
   // Modal Playground State
   const [modalOpen, setModalOpen] = useState(false);
   const [modalSize, setModalSize] = useState<'sm' | 'md' | 'lg' | 'xl'>('md');
+
+  // Crash Simulation Playground State
+  const [triggerCrash, setTriggerCrash] = useState(false);
 
   // DataTable State
   const [sortKey, setSortKey] = useState('name');
@@ -103,12 +112,12 @@ export const ComponentsCatalog = () => {
   };
 
   return (
-    <Box sx={{ p: 4, display: 'flex', flexDirection: 'column', gap: 4 }}>
-      <Box sx={{ borderBottom: '1px solid', borderColor: 'divider', pb: 2 }}>
-        <Typography variant="h3" sx={{ fontWeight: 'extrabold', letterSpacing: '-0.025em' }}>
+    <Box className="space-y-6 max-w-7xl mx-auto pb-12 animate-fade-in">
+      <Box className="border-b border-slate-205 dark:border-slate-800 pb-5">
+        <Typography variant="h3" className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50">
           UI Components Playground
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+        <Typography variant="body2" color="text.secondary" className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
           Interactive sandboxes for visualizing, configuring, and testing properties across all refactored platform UI library components.
         </Typography>
       </Box>
@@ -278,6 +287,104 @@ export const ComponentsCatalog = () => {
           </Card>
         </Grid>
 
+        {/* System Feedback & Fault Isolation Sandbox */}
+        <Grid size={12}>
+          <Card title="System Feedback & Fault Isolation Playgrounds" subtitle="Test application notification toasts and isolated crash boundaries.">
+            <Grid container spacing={3}>
+              
+              {/* Toasts section */}
+              <Grid size={{ xs: 12, md: 6 }} className="space-y-4">
+                <Typography className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1 block">
+                  GLOBAL NOTIFICATION TOASTS
+                </Typography>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Trigger global sliding notification alert banners with color variants using the central Zustand notification store.
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  <button 
+                    onClick={() => triggerToast('success', 'Operation completed successfully!')}
+                    className="py-2 px-3 rounded-lg text-xs font-bold text-emerald-800 dark:text-emerald-350 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-150 dark:border-emerald-900/60 hover:bg-emerald-100 dark:hover:bg-emerald-950/40 active:scale-95 transition-all cursor-pointer"
+                  >
+                    Trigger Success Toast
+                  </button>
+                  
+                  <button 
+                    onClick={() => triggerToast('error', 'Critical execution failure.')}
+                    className="py-2 px-3 rounded-lg text-xs font-bold text-rose-800 dark:text-rose-355 bg-rose-50 dark:bg-rose-950/20 border border-rose-150 dark:border-rose-900/60 hover:bg-rose-100 dark:hover:bg-rose-950/40 active:scale-95 transition-all cursor-pointer"
+                  >
+                    Trigger Error Toast
+                  </button>
+
+                  <button 
+                    onClick={() => triggerToast('info', 'System configuration updated.')}
+                    className="py-2 px-3 rounded-lg text-xs font-bold text-blue-800 dark:text-blue-355 bg-blue-500/10 border border-blue-150 dark:border-blue-900/60 hover:bg-blue-200/20 dark:hover:bg-blue-950/40 active:scale-95 transition-all cursor-pointer"
+                  >
+                    Trigger Info Toast
+                  </button>
+
+                  <button 
+                    onClick={() => triggerToast('warning', 'Low storage allocation warning.')}
+                    className="py-2 px-3 rounded-lg text-xs font-bold text-amber-800 dark:text-amber-350 bg-amber-50 dark:bg-amber-950/20 border border-amber-150 dark:border-amber-900/60 hover:bg-amber-100 dark:hover:bg-amber-950/40 active:scale-95 transition-all cursor-pointer"
+                  >
+                    Trigger Warning Toast
+                  </button>
+                </div>
+              </Grid>
+
+              {/* Crash component exception boundary */}
+              <Grid size={{ xs: 12, md: 6 }} className="space-y-4">
+                <Typography className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1 block">
+                  FAULT ISOLATION (ERROR BOUNDARIES)
+                </Typography>
+                <div className="p-4 border border-rose-150 dark:border-rose-950/50 bg-rose-50/20 dark:bg-rose-950/5 rounded-xl">
+                  <ErrorBoundary
+                    fallback={(error, reset) => (
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2 text-rose-600 dark:text-rose-400 font-bold text-xs">
+                          <WarningAmberIcon className="w-4 h-4" /> Crash Intercepted Successfully
+                        </div>
+                        <div className="font-mono text-[10px] p-2.5 rounded bg-slate-900 dark:bg-black text-rose-450 border border-rose-900/40 max-h-[85px] overflow-auto select-all">
+                          {error.message}
+                        </div>
+                        <Button 
+                          variant="danger" 
+                          size="sm" 
+                          className="w-full text-xs font-bold py-2 rounded-lg cursor-pointer"
+                          onClick={() => {
+                            setTriggerCrash(false);
+                            reset();
+                          }}
+                        >
+                          Recover Components Playground
+                        </Button>
+                      </div>
+                    )}
+                  >
+                    {triggerCrash ? (
+                      <CrashComponent />
+                    ) : (
+                      <div className="space-y-2">
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                          Force exception throwing inside this isolated card boundary. Test React's ability to isolate faults and recover safely.
+                        </p>
+                        <Button 
+                          variant="danger" 
+                          size="sm" 
+                          className="w-full text-xs font-bold py-2 rounded-lg bg-rose-600 hover:bg-rose-700 cursor-pointer"
+                          onClick={() => setTriggerCrash(true)}
+                        >
+                          Trigger Crash Exception
+                        </Button>
+                      </div>
+                    )}
+                  </ErrorBoundary>
+                </div>
+              </Grid>
+
+            </Grid>
+          </Card>
+        </Grid>
+
         {/* DataTable Section */}
         <Grid size={12}>
           <Card title="Interactive DataTable Sandbox" subtitle="Verify data sorting algorithms, custom column widgets, and pagination navigation.">
@@ -333,4 +440,5 @@ export const ComponentsCatalog = () => {
     </Box>
   );
 };
+
 export default ComponentsCatalog;

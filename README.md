@@ -27,7 +27,7 @@ It is designed so that you can easily fork it on GitHub to spin up new, modular 
 
 ## Usage
 
-Clone the repository and run the automated platform setup script. The setup script will detect/install PostgreSQL, start the database service, provision the development database, create local environment configurations, and install dependencies:
+Clone the repository and run the automated setup script. The setup script will clone the environment file and install dependencies:
 
 ```bash
 # Run the command to clone the repo without git history.
@@ -42,7 +42,7 @@ npx del-cli del **/.gitkeep
 git init
 ```
 
-### 🚀 Automated Setup (with PostgreSQL)
+### 🚀 Automated Setup
 
 - **On Windows (PowerShell):**
   ```powershell
@@ -54,14 +54,9 @@ git init
   ./setup.sh
   ```
 
-This configures a local PostgreSQL instance by default:
-- **Host:** `localhost`
-- **Port:** `5432`
-- **User:** `postgres`
-- **Password:** `password`
-- **Database:** `bodhika_enterprise`
+This configures a client-side WebAssembly-based SQLite database (`sql.js`) to persist mock relational data in the browser. It stores base64-encoded SQL binary dumps directly inside local storage (`mock_sqlite_db_base64`), preserving changes across page reloads.
 
-A `.env` configuration file is automatically created matching these credentials.
+A `.env` configuration file is automatically created during setup.
 
 ---
 

@@ -21,6 +21,14 @@ export const DashboardLayout = () => {
           <Link to="/users" className="block p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">Users</Link>
           <Link to="/tenants" className="block p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">Tenants</Link>
           <Link to="/settings" className="block p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700">Settings</Link>
+          
+          {user?.roles.includes('super_admin') && (
+            <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
+              <span className="block px-2 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Developer Tools</span>
+              <Link to="/preflight" className="block p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200">Preflight Diagnostics</Link>
+              <Link to="/components" className="block p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200">UI Components Catalog</Link>
+            </div>
+          )}
         </nav>
       </aside>
 

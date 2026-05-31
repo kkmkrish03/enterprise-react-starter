@@ -9,7 +9,7 @@ This document will teach you exactly how to use the platform and where to go to 
 ## 🚀 How to Run the Project
 
 ### 1. Initial Setup
-The project provides automated setup scripts that detect/install PostgreSQL, start the database service, provision a development database, create environment configuration files, and install node dependencies:
+The project provides automated setup scripts that create environment configuration files and install workspace dependencies:
 
 - **On Windows (PowerShell):**
   ```powershell
@@ -21,18 +21,11 @@ The project provides automated setup scripts that detect/install PostgreSQL, sta
   ./setup.sh
   ```
 
-#### 📦 Database Defaults
-The automated setup configures a local PostgreSQL instance with the following default parameters:
-- **Host:** `localhost`
-- **Port:** `5432`
-- **User:** `postgres`
-- **Password:** `password`
-- **Database:** `bodhika_enterprise`
-
-The credentials are saved in `.env` automatically under the `DATABASE_URL` parameter:
-```env
-DATABASE_URL=postgresql://postgres:password@localhost:5432/bodhika_enterprise
-```
+#### 📦 Client-Side Database (SQLite WASM)
+In development mode, the platform runs a local-first SQL database running directly in the browser via `sql.js` (WebAssembly-based SQLite).
+- All DTO CRUD queries are executed directly on the client.
+- The binary database file is automatically exported and base64-encoded to `localStorage` (`mock_sqlite_db_base64`) on mutations, keeping mock data persistent across page reloads.
+- To clear the database and restore default records, clear your browser's local storage.
 
 ### 2. Start the Development Server
 To run the admin application locally with Hot Module Replacement (HMR):

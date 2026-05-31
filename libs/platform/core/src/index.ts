@@ -15,3 +15,4 @@ export * from './lib/api/services/UserService';
 export * from './lib/api/services/RoleService';
 export * from './lib/api/services/TenantService';
 export * from './lib/api/services/ConfigService';
+export * from './lib/api/sqliteDb';

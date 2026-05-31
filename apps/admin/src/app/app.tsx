@@ -31,6 +31,22 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return children as React.JSX.Element;
 };
 
+const SuperAdminRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+  if (!user) return <Navigate to="/login" />;
+  if (!user.roles.includes('super_admin')) return <Navigate to="/" />;
+  
+  return children as React.JSX.Element;
+};
+
 export function App() {
   return (
     <TenantProvider>
@@ -48,8 +64,8 @@ export function App() {
                 <Route path="/users" element={<ErrorBoundary><Users /></ErrorBoundary>} />
                 <Route path="/settings" element={<ErrorBoundary><Settings /></ErrorBoundary>} />
                 <Route path="/tenants" element={<ErrorBoundary><TenantManagement /></ErrorBoundary>} />
-                <Route path="/preflight" element={<ErrorBoundary><PreflightTest /></ErrorBoundary>} />
-                <Route path="/components" element={<ErrorBoundary><ComponentsCatalog /></ErrorBoundary>} />
+                <Route path="/preflight" element={<SuperAdminRoute><ErrorBoundary><PreflightTest /></ErrorBoundary></SuperAdminRoute>} />
+                <Route path="/components" element={<SuperAdminRoute><ErrorBoundary><ComponentsCatalog /></ErrorBoundary></SuperAdminRoute>} />
               </Route>
 
               {/* 404 Catch All */}

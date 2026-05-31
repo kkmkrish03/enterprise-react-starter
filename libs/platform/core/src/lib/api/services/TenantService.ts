@@ -1,4 +1,5 @@
 import { apiClient } from '../apiClient';
+import { getSqliteDb, query, run } from '../sqliteDb';
 
 export interface TenantDTO {
   id: string;
@@ -12,55 +13,25 @@ export interface TenantDTO {
   };
 }
 
-const SEED_TENANTS: TenantDTO[] = [
-  {
-    id: 'default',
-    name: 'Default Tenant',
-    status: 'ACTIVE',
-    domain: 'localhost',
-    plan: 'ENTERPRISE',
-    branding: { primaryColor: '#1976d2' }
-  },
-  {
-    id: 'acme',
-    name: 'Acme Corporation',
-    status: 'ACTIVE',
-    domain: 'acme.localhost',
-    plan: 'PRO',
-    branding: { primaryColor: '#7b1fa2' }
-  },
-  {
-    id: 'globex',
-    name: 'Globex Corp',
-    status: 'INACTIVE',
-    domain: 'globex.localhost',
-    plan: 'STARTER',
-    branding: { primaryColor: '#388e3c' }
-  }
-];
-
-const LOCAL_STORAGE_KEY = 'mock_db_tenants';
-
-const getMockTenants = (): TenantDTO[] => {
-  const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
-  if (!stored) {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(SEED_TENANTS));
-    return SEED_TENANTS;
-  }
-  return JSON.parse(stored);
-};
-
-const saveMockTenants = (tenants: TenantDTO[]) => {
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(tenants));
-};
-
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const TenantService = {
   getTenants: async (): Promise<TenantDTO[]> => {
     if (import.meta.env.VITE_AUTH_MODE !== 'http') {
       await delay(400);
-      return getMockTenants();
+      const db = await getSqliteDb();
+      const rows = query<any>(db, "SELECT * FROM tenants");
+      return rows.map(r => ({
+        id: r.id,
+        name: r.name,
+        status: r.status as 'ACTIVE' | 'INACTIVE',
+        domain: r.domain,
+        plan: r.plan as 'ENTERPRISE' | 'PRO' | 'STARTER',
+        branding: {
+          primaryColor: r.primaryColor,
+          logoUrl: r.logoUrl || undefined
+        }
+      }));
     }
     const response = await apiClient.get<TenantDTO[]>('/tenants');
     return response.data;
@@ -69,21 +40,33 @@ export const TenantService = {
   updateTenant: async (id: string, data: Partial<TenantDTO>): Promise<TenantDTO> => {
     if (import.meta.env.VITE_AUTH_MODE !== 'http') {
       await delay(400);
-      const tenants = getMockTenants();
-      const tenantIndex = tenants.findIndex((t) => t.id === id);
-      if (tenantIndex === -1) throw new Error('Tenant not found');
+      const db = await getSqliteDb();
+      const existing = query<any>(db, "SELECT * FROM tenants WHERE id = ?", [id]);
+      if (existing.length === 0) throw new Error('Tenant not found');
 
-      const updatedTenant = {
-        ...tenants[tenantIndex],
-        ...data,
+      const t = existing[0];
+      const name = data.name !== undefined ? data.name : t.name;
+      const status = data.status !== undefined ? data.status : t.status;
+      const domain = data.domain !== undefined ? data.domain : t.domain;
+      const plan = data.plan !== undefined ? data.plan : t.plan;
+      const primaryColor = data.branding?.primaryColor !== undefined ? data.branding.primaryColor : t.primaryColor;
+      const logoUrl = data.branding?.logoUrl !== undefined ? data.branding.logoUrl : t.logoUrl;
+
+      run(db, "UPDATE tenants SET name = ?, status = ?, domain = ?, plan = ?, primaryColor = ?, logoUrl = ? WHERE id = ?", [
+        name, status, domain, plan, primaryColor, logoUrl, id
+      ]);
+
+      return {
+        id,
+        name,
+        status: status as 'ACTIVE' | 'INACTIVE',
+        domain,
+        plan: plan as 'ENTERPRISE' | 'PRO' | 'STARTER',
         branding: {
-          ...tenants[tenantIndex].branding,
-          ...data.branding
+          primaryColor,
+          logoUrl: logoUrl || undefined
         }
       };
-      tenants[tenantIndex] = updatedTenant;
-      saveMockTenants(tenants);
-      return updatedTenant;
     }
     const response = await apiClient.put<TenantDTO>(`/tenants/${id}`, data);
     return response.data;
